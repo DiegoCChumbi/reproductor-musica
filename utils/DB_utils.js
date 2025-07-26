@@ -1,6 +1,6 @@
 import {mongoose} from "mongoose"
 import {cancion} from "../models/cancionModel.js"
-import {subir} from "./R2_Utils.js"
+import {eliminarDeR2, subir} from "./R2_Utils.js"
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -38,10 +38,22 @@ async function listarTodos(){
 
 async function eliminar(id){
     try{
+
+        const song = await cancion.findById(id)
+        if (!song){
+            console.log("Cancion no encontrada en la BD")
+            return null
+        }
+
+        if(song.linkKey){
+            await eliminarDeR2(song.linkKey)
+        }
+
         const result = await cancion.deleteOne({_id:id})
+        console.log(`Eliminada de MongoDB: ${id}`)
         return result
     } catch (error){
-        console.log(error)
+        console.log("Error al eliminar: ", error)
         await terminar()
     }
     return null
@@ -69,9 +81,9 @@ async function insertar(_nombre, _album, _autor, _anho, _archivo, _habilitado){
     return null
 }
 
-async function listarPorCriterio(criterio){
+async function listarPorCriterio(filtro){
     try{
-        const resultSet = await cancion.find({[criterio]:criterio})
+        const resultSet = await cancion.find(filtro)
         return resultSet
     } catch (error){
         console.log(error)
@@ -80,15 +92,23 @@ async function listarPorCriterio(criterio){
     return null
 }
 
-async function actualizar(_nombre, _album, _autor, _anho, _habilitado){
-    try{
-        const result = await cancion.updateOne({_id:id},{nombre: _nombre,album: _album, autor: _autor, anho: _anho, habilitado: _habilitado})
-        return result
-    } catch (error){
-        console.log(error)
-        await terminar()
-    }
-    return null
+async function actualizar(id, _nombre, _album, _autor, _anho, _habilitado) {
+  try {
+    const result = await cancion.updateOne(
+      { _id: id }, 
+      {
+        nombre: _nombre,
+        album: _album,
+        autor: _autor,
+        anho: _anho,
+        habilitado: _habilitado,
+      }
+    );
+    return result;
+  } catch (error) {
+    console.error("Error actualizando canción:", error.message);
+    return null;
+  }
 }
 
 export {iniciar, terminar, listarTodos, eliminar, insertar, actualizar, listarPorCriterio}

@@ -24,7 +24,7 @@ function leerMP3(rutaArchivo){
 
   	return archivo
 }
-/*
+
 (async () => {
   await iniciar();
 
@@ -42,7 +42,7 @@ function leerMP3(rutaArchivo){
 
   await terminar();
 })();
-*/
+
 
 /*
 (async () => {
@@ -64,13 +64,16 @@ function leerMP3(rutaArchivo){
 	const canciones = await listarTodos();
 	for (let c of canciones){
 		const res = await eliminar(c._id);
-		console.log(`Cancion ${c._nombre} eliminada ->`,res);
+		console.log(`Cancion ${c.nombre} eliminada ->`,res);
 	}
 	await terminar();
 })();
 */
 
+/*
 (async () => {
 	const link = await obtenerLink("1753420382048-imagine.mp3");
 	console.log(link)
 })();
+*/
+

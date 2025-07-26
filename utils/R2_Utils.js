@@ -1,4 +1,4 @@
-import { S3Client, PutObjectCommand, GetObjectCommand } from "@aws-sdk/client-s3";
+import { S3Client, PutObjectCommand, GetObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import dotenv from "dotenv";
 dotenv.config();
@@ -45,4 +45,17 @@ async function obtenerLink(key){
     return url;
 }
 
-export {subir, obtenerLink}
+async function eliminarDeR2(key){
+	try{
+		await s3.send(new DeleteObjectCommand({
+			Bucket: "canciones",
+			Key: key
+		}));
+		console.log(`Eliminado de R2: ${key}`);
+	}catch (err){
+		console.log(`Error al eliminar de R2: `, err.message);
+		throw err;
+	}
+}
+
+export {subir, obtenerLink, eliminarDeR2}
